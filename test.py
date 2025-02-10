@@ -1,80 +1,122 @@
-from googlesearch import search
-import requests
-from typing import List, Dict
+from structured_data_extractor import SearchResultExtractor
+import json
 
-class Target():
-    def __init__(self):
-        self.name = "Elias Torjani"  #input("Name? ")
-        self.username = "eliastorjani"  #input("Username? ")
-        self.queries = []
-        self.urls = []
+# Complete search results
+search_results = {
+    "organic_results": [
+        {
+            "position": 1,
+            "title": "Elias Salvador Smidt Torjani (@eliastorjani)",
+            "link": "https://www.instagram.com/eliastorjani/",
+            "snippet": "Follow. This account is private. Already follow eliastorjani? Switch to the app or log in to see their photos and videos. Switch to the App.",
+            "source": "Instagram"
+        },
+        {
+            "position": 2,
+            "title": "Elias torjani (eliastorjani) - Profile",
+            "link": "https://dk.pinterest.com/eliastorjani/",
+            "snippet": "See what Elias torjani (eliastorjani) has discovered on Pinterest, the world's biggest collection of ideas.",
+            "source": "Pinterest"
+        },
+        {
+            "position": 3,
+            "title": "Salam bromigos and bromigas! 👋I'm a 21 year old boy from ...",
+            "link": "https://www.instagram.com/activebulgariansociety/p/CM4CZWeFGkk/",
+            "snippet": "Photo shared by Active Bulgarian Society on March 26, 2021 tagging @eliastorjani. ... eliastorjani · @activebulgariansociety @yungleth you.",
+            "source": "Instagram"
+        },
+        {
+            "position": 4,
+            "title": "Sommerlejr / Summer Camp",
+            "link": "https://www.icye.dk/en/summer-camp/",
+            "snippet": "eliastorjani@gmail.com. Returning to the train station. When the camp ends on Saturday, the shared bus will again drive people back to Odense ...",
+            "source": "Dansk ICYE",
+            "date": "Aug 15, 2024"
+        }
+    ],
+    "inline_images": [
+        {
+            "source": "https://www.icye.dk/en/summer-camp/",
+            "title": "Sommerlejr / Summer Camp",
+            "source_name": "Dansk ICYE"
+        },
+        {
+            "source": "https://www.facebook.com/DanskICYE/posts/",
+            "title": "Dansk ICYE - Hils på Dansk ICYE's bestyrelse 2024",
+            "source_name": "Facebook"
+        }
+    ]
+}
 
-def sanity(self):
-    print(f"Name: {self.name}\n"
-          f"Username: {self.username}\n"
-          f"queries: {self.queries}\n"
-          f"urls: {self.urls}")
-
-def rm_dublicates(self):
-    # Remove dublicates from any list
-    self.urls = list(set(self.urls))
-    print(f"urls: {self.urls}")
-
-
-class Dork(Target):
-    def __init__(self):
-        super().__init__()
-
-    def query_generator(self) -> str: #, queries: List[str]) -> str:
-        """Generates a Google dorking queries."""
-        google = f'"{self.name}"'
-        fb = f'site:facebook.com intext:"{self.username}"'
-        fb_name = f'site:facebook.com intext:"{self.name}"'
-        ig = f'site:instagram.com intext:"{self.username}"'
-        
-        self.queries.extend([google, fb, fb_name, ig])
-        print(f"Queries: {self.queries}\n")
-        return google, fb, ig, fb_name
-
-class GoogleManager(Target):
-    def __init__(self):
-        pass
-
-    def search(self, queries: List[str], urls: List[str]) -> List[str]:
-        for i, query in enumerate(queries):
-            print(f"Processing query {i + 1}/{len(queries)}: {query}")
-            results = list(search(query))
-            urls.extend(results)
-
-        rm_dublicates(urls)
-        return results
-
-# -----------------------------
-# Main Workflow
-# -----------------------------
-if __name__ == "__main__":
-    # Input Details --> in ABC now
+# Input Details --> in ABC now
     # name = input("Enter the person's name: ")
     # username = input("Enter their username: ")
-    target = Target()
-    dork = Dork()
-    # Step 1: Generate Queries --> in ABC now
-    print("\nGenerated Queries:")
-    dork.query_generator(dork.name, dork.username)
-    print(f"Queries from dork instance: {dork.queries}")
+#     target = Target()
+#     dork = Dork()
+#     # Step 1: Generate Queries --> in ABC now
+#     print("\nGenerated Queries:")
+#     dork.query_generator(dork.name, dork.username)
+#     print(f"Queries from dork instance: {dork.queries}")
     
-    # Step 2: Perform Google Searches
-    g = GoogleManager()
-    urls = g.search(dork.queries)  # Pass queries from the dork instance
+#     # Step 2: Perform Google Searches
+#     g = GoogleManager()
+#     urls = g.search(dork.queries)  # Pass queries from the dork instance
     
-    print("\nRetrieved URLs:")
-    print(urls)
+#     print("\nRetrieved URLs:")
+#     print(urls)
+# # Input Details --> in ABC now
+#     # name = input("Enter the person's name: ")
+#     # username = input("Enter their username: ")
+#     target = Target()
+#     dork = Dork()
+#     # Step 1: Generate Queries --> in ABC now
+#     print("\nGenerated Queries:")
+#     dork.query_generator(dork.name, dork.username)
+#     print(f"Queries from dork instance: {dork.queries}")
+    
+#     # Step 2: Perform Google Searches
+#     g = GoogleManager()
+#     urls = g.search(dork.queries)  # Pass queries from the dork instance
+    
+#     print("\nRetrieved URLs:")
+#     print(urls)
 
-    # # Step 3: Extract Text Content
-    extractor = TextExtractor()
-    content = extractor.extract_bulk(urls)
-    print(f"\nExtracted content from {len(content)} URLs.")
 
-    # # Step 4: Save to File
-    output_file = "extracted_content.txt"
-    extractor.save_to_file(content, output_file)
+# Input Details --> in ABC now
+    # name = input("Enter the person's name: ")
+    # username = input("Enter their username: ")
+    # target = Target()
+    # dork = Dork()
+    # # Step 1: Generate Queries --> in ABC now
+    # print("\nGenerated Queries:")
+    # dork.query_generator(dork.name, dork.username)
+    # print(f"Queries from dork instance: {dork.queries}")
+    
+    # # Step 2: Perform Google Searches
+    # g = GoogleManager()
+    # urls = g.search(dork.queries)  # Pass queries from the dork instance
+    
+    # print("\nRetrieved URLs:")
+    # print(urls)
+    # # # Step 3: Extract Text Content
+    # extractor = TextExtractor()
+    # content = extractor.extract_bulk(urls)
+    # print(f"\nExtracted content from {len(content)} URLs.")
+    #  # # Step 4: Save to File
+    # output_file = "extracted_content.txt"
+    # extractor.save_to_file(content, output_file)
+    
+
+if __name__ == "__main__":
+    
+    # Create extractor instance
+    extractor = SearchResultExtractor(search_results)
+
+    # Optionally fetch page contents (this may take a while)
+    print("Fetching page contents...")
+    extractor.fetch_page_contents()
+
+    # Save to JSON file
+    extractor.to_json('structured_data.json')
+
+    print("Data has been extracted and saved to structured_data.json")

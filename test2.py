@@ -33,8 +33,21 @@ class Google(Dork):
             print(f"Processing query {i + 1}/{len(self.queries)}: {query}")
             results = list(search(query))
             self.urls.extend(results)
+            # try:
+            #     results = list(search(query, num_results=5))
+            #     print(f"Found {len(results)} results for query: {query}")
+            #     self.urls.extend(results)
+                # search_results = search(query, num_results=10)
+                # Iterate through the generator and collect results
+                # for url in search_results:
+                #     print(f"Found URL: {url}")
+                #     self.urls.append(url)
+            # except Exception as e:
+            #     print(f"Error during search for query '{query}': {e}")
 
         self.urls = list(set(self.urls))
+        print(f"Total unique URLs found: {len(self.urls)}")
+        print(f"URLs: {self.urls}\n")
         return self.urls
 
 class Extractor(Google):
