@@ -4,6 +4,10 @@ from typing import List
 import json
 import serpapi
 from serpapi import GoogleSearch
+import logging
+
+# Add logging setup at the beginning of the file
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Target:
     def __init__(self):
@@ -44,12 +48,12 @@ class Google(Dork):
         # urls.extend(serp_search("foodclub", api_key))
 
     def google_search(query, api_key, cse_id): # Default Google w/ api
+        from googleapiclient.discovery import build
         service = build("customsearch", "v1", developerKey=api_key)
         results = service.cse().list(q=query, cx=cse_id).execute()
         
         return [item['link'] for item in results.get('items', [])]
         # urls.extend(google_search("foodclub", api_key, cse_id))
-
 
     def search(self) -> List[str]: # Default Google w/o api
         for i, query in enumerate(self.queries):
@@ -71,10 +75,10 @@ class Google(Dork):
             #     print(f"Error during search for query '{query}': {e}")
 
     
-    self.urls = list(set(self.urls))
-    print(f"Total unique URLs found: {len(self.urls)}")
-    print(f"URLs: {self.urls}\n")
-    return self.urls
+        self.urls = list(set(self.urls))
+        print(f"Total unique URLs found: {len(self.urls)}")
+        print(f"URLs: {self.urls}\n")
+        return self.urls
 
 class Extractor(Google):
     def extract(self, url: str) -> str:
@@ -84,7 +88,7 @@ class Extractor(Google):
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
-            print(f"Error extracting from {url}: {e}")
+            logging.error(f"Error extracting from {url}: {e}")
             return ""
 
     def extract_all_urls(self) -> List[str]:
