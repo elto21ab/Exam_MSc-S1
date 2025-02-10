@@ -1,6 +1,9 @@
 from googlesearch import search
 import requests
 from typing import List
+import json
+import serpapi
+from serpapi import GoogleSearch
 
 class Target:
     def __init__(self):
@@ -28,11 +31,33 @@ class Dork(Target):
         return self.queries
 
 class Google(Dork):
-    def search(self) -> List[str]:
+    def serp_search(query, api_key): # Serpapi
+        params = {
+            "q": query,
+            "api_key": api_key
+        }
+
+        search = GoogleSearch(params)
+        results = search.get_dict()
+
+        return [result.get('link') for result in results.get('organic_results', [])]
+        # urls.extend(serp_search("foodclub", api_key))
+
+    def google_search(query, api_key, cse_id): # Default Google w/ api
+        service = build("customsearch", "v1", developerKey=api_key)
+        results = service.cse().list(q=query, cx=cse_id).execute()
+        
+        return [item['link'] for item in results.get('items', [])]
+        # urls.extend(google_search("foodclub", api_key, cse_id))
+
+
+    def search(self) -> List[str]: # Default Google w/o api
         for i, query in enumerate(self.queries):
             print(f"Processing query {i + 1}/{len(self.queries)}: {query}")
             results = list(search(query))
             self.urls.extend(results)
+            # urls.extend(google_search("foodclub", api_key, cse_id))
+
             # try:
             #     results = list(search(query, num_results=5))
             #     print(f"Found {len(results)} results for query: {query}")
@@ -45,10 +70,11 @@ class Google(Dork):
             # except Exception as e:
             #     print(f"Error during search for query '{query}': {e}")
 
-        self.urls = list(set(self.urls))
-        print(f"Total unique URLs found: {len(self.urls)}")
-        print(f"URLs: {self.urls}\n")
-        return self.urls
+    
+    self.urls = list(set(self.urls))
+    print(f"Total unique URLs found: {len(self.urls)}")
+    print(f"URLs: {self.urls}\n")
+    return self.urls
 
 class Extractor(Google):
     def extract(self, url: str) -> str:
